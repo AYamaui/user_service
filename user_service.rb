@@ -2,6 +2,7 @@ require 'active_record'
 require 'sinatra'
 require_relative 'models/user.rb'
 require 'logger'
+require 'pry'
 
 # setting up a logger. levels -> DEBUG < INFO < WARN < ERROR < FATAL < UNKNOWN
 log = Logger.new(STDOUT)
