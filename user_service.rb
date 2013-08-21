@@ -35,6 +35,7 @@ end
 # get a user by name
 get '/api/v1/users/:name' do
   user = User.find_by_name(params[:name])
+  ActiveRecord::Base.connection.close
   if user
     user.to_json
   else
@@ -46,6 +47,7 @@ end
 post '/api/v1/users' do
   begin
     user = User.create(JSON.parse(request.body.read))
+    ActiveRecord::Base.connection.close
     if user.valid?
       user.to_json
     else
@@ -59,10 +61,12 @@ end
 # update an existing user
 put '/api/v1/users/:name' do
   user = User.find_by_name(params['name'])
+  ActiveRecord::Base.connection.close
   if user
     begin
       attributes = JSON.parse(request.body.read)
       updated_user = user.update_attributes(attributes)
+      ActiveRecord::Base.connection.close
       if updated_user
         user.to_json
       else
@@ -79,8 +83,10 @@ end
 # destroy an existing user
 delete '/api/v1/users/:name' do
   user = User.find_by_name(params[:name])
+  ActiveRecord::Base.connection.close
   if user
     user.destroy
+    ActiveRecord::Base.connection.close
     user.to_json
   else
     error 404, {:error => 'user not found'}.to_json
@@ -92,6 +98,7 @@ post '/api/v1/users/:name/sessions' do
   begin
     attributes = JSON.parse(request.body.read)
     user = User.find_by_name_and_password(params[:name],attributes['password'])
+    ActiveRecord::Base.connection.close
     if user
       user.to_json
     else
